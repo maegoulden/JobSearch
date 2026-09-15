@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobSearch Tracker</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>JobSearch Tracker</h1>
+    <button id="check-all-btn" class="btn btn-primary">Check all now</button>
+  </header>
+
+  <main>
+    <section class="panel" id="add-site-panel">
+      <h2>Watch a new career page</h2>
+      <form id="add-site-form">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="e.g. Acme Corp Careers" />
+        </div>
+        <div class="field">
+          <label for="url">Career page URL *</label>
+          <input type="url" id="url" placeholder="https://company.com/careers" required />
+        </div>
+        <div class="field">
+          <label for="selector">CSS selector (optional)</label>
+          <input type="text" id="selector" placeholder="body" />
+          <p class="hint">Scope checks to the job-listings container, e.g. <code>#job-list</code>, to avoid noise from unrelated page changes.</p>
+        </div>
+        <button type="submit" class="btn btn-primary">Add site</button>
+      </form>
+      <p id="add-site-error" class="error" hidden></p>
+    </section>
+
+    <section class="panel">
+      <h2>Monitored career pages</h2>
+      <div id="sites-list" class="sites-list">
+        <p class="empty-state">No sites yet — add one above to start tracking.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Recent changes</h2>
+      <div id="recent-changes" class="history-list">
+        <p class="empty-state">No changes detected yet.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="diff-modal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="diff-modal-title">Change details</h3>
+        <button id="diff-modal-close" class="btn btn-icon" aria-label="Close">&times;</button>
+      </div>
+      <pre id="diff-modal-body" class="diff-view"></pre>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

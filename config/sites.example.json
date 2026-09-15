@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Acme Corp Careers",
+    "url": "https://www.example.com/careers",
+    "selector": "#job-listings"
+  },
+  {
+    "name": "Example Inc Jobs",
+    "url": "https://jobs.example.com",
+    "selector": "body"
+  }
+]
