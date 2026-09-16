@@ -8,6 +8,7 @@ import {
   deleteSnapshot,
 } from './store.js';
 import { checkSiteById, checkAllSites } from './checker.js';
+import { isEmailConfigured } from './mailer.js';
 
 const router = Router();
 
@@ -19,6 +20,10 @@ function isValidUrl(value) {
     return false;
   }
 }
+
+router.get('/status', (req, res) => {
+  res.json({ emailConfigured: isEmailConfigured() });
+});
 
 router.get('/sites', (req, res) => {
   res.json(loadSites());

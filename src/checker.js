@@ -6,6 +6,7 @@ import {
   writeSnapshot,
   addHistoryEntry,
 } from './store.js';
+import { sendChangeEmail } from './mailer.js';
 
 const inProgress = new Set();
 
@@ -49,7 +50,7 @@ async function checkSiteById(id) {
 
       if (result.changed) {
         site.lastChangedAt = now;
-        addHistoryEntry({
+        const entry = addHistoryEntry({
           id: crypto.randomUUID(),
           siteId: site.id,
           siteName: site.name,
@@ -57,6 +58,9 @@ async function checkSiteById(id) {
           timestamp: now,
           summary: summarizeDiff(result.diffParts),
           diffParts: result.diffParts,
+        });
+        sendChangeEmail(site, entry).catch((err) => {
+          console.error(`[mailer] failed to send change email for ${site.name}`, err);
         });
       }
 

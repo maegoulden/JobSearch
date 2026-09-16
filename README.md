@@ -8,6 +8,7 @@ A self-hosted tool that watches career pages for changes and shows you what's ne
 2. On a schedule (default: every 30 minutes) it fetches each page, strips out scripts/styles, and extracts the visible text.
 3. It compares that text against the last snapshot it took. If anything changed, it records a line-level diff.
 4. The dashboard shows every monitored page's status (OK / Changed / Error) and a feed of recent changes you can click into to see exactly what was added or removed.
+5. If you've configured email (see below), you also get an email the moment a change is detected — no need to keep the dashboard open.
 
 There's no external database — state is stored as JSON files under `data/` (created automatically, gitignored).
 
@@ -42,6 +43,25 @@ Environment variables (all optional):
 | --- | --- | --- |
 | `PORT` | `3000` | Port the web server listens on |
 | `CHECK_CRON_SCHEDULE` | `*/30 * * * *` | Cron expression for how often to check all sites |
+| `SMTP_HOST` | — | SMTP server hostname, e.g. `smtp.gmail.com` or `smtp-mail.outlook.com` |
+| `SMTP_PORT` | `587` | SMTP port |
+| `SMTP_SECURE` | `false` | Set to `true` for implicit TLS (typically port 465) |
+| `SMTP_USER` | — | SMTP username |
+| `SMTP_PASS` | — | SMTP password / app password |
+| `EMAIL_FROM` | `SMTP_USER` | "From" address on notification emails |
+| `EMAIL_TO` | — | Where to send change notifications |
+
+### Email notifications
+
+Set `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, and `EMAIL_TO` and you'll get an email every time a tracked page changes, with a summary and the diff. Leave them unset and the app works exactly the same, just dashboard-only — the UI shows a banner reminding you notifications aren't configured.
+
+Most providers require an **app password** rather than your normal login password:
+
+- **Gmail**: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587` — create an [app password](https://myaccount.google.com/apppasswords) (requires 2-Step Verification enabled).
+- **Outlook / Hotmail**: `SMTP_HOST=smtp-mail.outlook.com`, `SMTP_PORT=587` — create an [app password](https://account.live.com/proofs/AppPassword) if your account has 2-step verification on.
+- Any other provider's SMTP + an app password works the same way.
+
+If deploying via the Render blueprint below, it'll prompt you for these values during setup.
 
 ## API
 
@@ -72,4 +92,4 @@ Caveat: on Render's **free** plan the service spins down after 15 minutes of ina
 ## Notes and future ideas
 
 - Career pages vary a lot in structure, so the diff is a generic text-line comparison rather than a "new job posting" parser. Using a tight CSS selector for the listings container is the main way to cut noise.
-- Not implemented yet, but natural next steps: email/Slack/push notifications on change, per-site check intervals, and ignore-pattern rules for lines that change harmlessly (like dates or view counts).
+- Not implemented yet, but natural next steps: Slack/push notifications, per-site check intervals, and ignore-pattern rules for lines that change harmlessly (like dates or view counts).

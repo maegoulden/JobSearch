@@ -118,6 +118,9 @@ function renderHistory(history) {
   });
 }
 
+const emailBanner = document.getElementById('email-banner');
+let statusChecked = false;
+
 async function loadAll() {
   const [sites, history] = await Promise.all([
     fetchJson('/api/sites'),
@@ -125,6 +128,19 @@ async function loadAll() {
   ]);
   renderSites(sites);
   renderHistory(history);
+
+  if (!statusChecked) {
+    statusChecked = true;
+    try {
+      const status = await fetchJson('/api/status');
+      if (!status.emailConfigured) {
+        emailBanner.innerHTML = 'Email notifications are not set up — changes only show up here on the dashboard. Set <code>SMTP_HOST</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code> and <code>EMAIL_TO</code> to get emailed when a career page changes. See the README.';
+        emailBanner.hidden = false;
+      }
+    } catch {
+      // status is a nice-to-have; ignore failures
+    }
+  }
 }
 
 async function checkSite(id) {

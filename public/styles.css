@@ -110,6 +110,17 @@ main {
 .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .error { color: var(--danger); font-size: 0.85rem; }
+
+.email-banner {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.email-banner code { background: var(--bg); padding: 0.1rem 0.3rem; border-radius: 4px; }
 .empty-state { color: var(--muted); font-size: 0.9rem; }
 
 .site-card {
