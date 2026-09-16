@@ -59,6 +59,16 @@ The dashboard is a thin client over a small JSON API, useful if you want to scri
 
 This is a plain Node/Express app with no build step, so it runs on any host that can run `npm start` continuously (Railway, Render, Fly.io, a VPS with `pm2`/`systemd`, etc.). Make sure the `data/` directory persists across restarts/deploys (e.g. a mounted volume) so your site list and snapshot history aren't lost.
 
+### One-click deploy to Render
+
+This repo includes a `render.yaml` blueprint, so you can deploy it without touching a terminal:
+
+1. Click **[Deploy to Render](https://render.com/deploy?repo=https://github.com/maegoulden/JobSearch)** and sign in with your GitHub account when prompted.
+2. Render reads `render.yaml` and provisions the web service automatically — just confirm and click **Apply**.
+3. Once the build finishes (a couple of minutes), Render gives you a public URL for the dashboard.
+
+Caveat: on Render's **free** plan the service spins down after 15 minutes of inactivity and the filesystem is not guaranteed to persist across restarts/redeploys, so your tracked sites and change history can reset from time to time. For reliable long-term tracking, upgrade to a paid instance with a persistent disk, or self-host on your own machine/VPS instead.
+
 ## Notes and future ideas
 
 - Career pages vary a lot in structure, so the diff is a generic text-line comparison rather than a "new job posting" parser. Using a tight CSS selector for the listings container is the main way to cut noise.

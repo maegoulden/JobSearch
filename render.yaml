@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: jobsearch-tracker
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: CHECK_CRON_SCHEDULE
+        value: "*/30 * * * *"
