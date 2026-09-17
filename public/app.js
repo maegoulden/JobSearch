@@ -70,6 +70,7 @@ function renderSites(sites) {
       </div>
       <div class="site-actions">
         <button class="btn btn-secondary check-btn" data-id="${site.id}">Check now</button>
+        ${site.lastChangedAt ? `<button class="btn btn-secondary view-changes-btn" data-id="${site.id}">View changes</button>` : ''}
         <button class="btn btn-danger delete-btn" data-id="${site.id}">Remove</button>
       </div>
     </div>
@@ -81,17 +82,44 @@ function renderSites(sites) {
   sitesListEl.querySelectorAll('.delete-btn').forEach((btn) => {
     btn.addEventListener('click', () => deleteSite(btn.dataset.id));
   });
+  sitesListEl.querySelectorAll('.view-changes-btn').forEach((btn) => {
+    btn.addEventListener('click', () => viewLatestChange(btn.dataset.id));
+  });
 }
 
+// Only renders added/removed lines — unchanged context is skipped so you
+// see just what changed, not the whole page's text.
 function renderDiffParts(diffParts) {
-  return diffParts.map((part) => {
-    const cls = part.added ? 'diff-add' : part.removed ? 'diff-del' : '';
+  const changedParts = diffParts.filter((part) => part.added || part.removed);
+
+  if (changedParts.length === 0) {
+    return '<span class="diff-empty">No line-level changes to show.</span>';
+  }
+
+  return changedParts.map((part) => {
+    const cls = part.added ? 'diff-add' : 'diff-del';
+    const prefix = part.added ? '+ ' : '- ';
     const lines = part.value.split('\n').filter((l) => l.length > 0);
-    return lines.map((line) => cls
-      ? `<span class="${cls}">${part.added ? '+ ' : '- '}${escapeHtml(line)}</span>`
-      : `<span>${escapeHtml(line)}</span>`
-    ).join('\n');
+    return lines.map((line) => `<span class="${cls}">${prefix}${escapeHtml(line)}</span>`).join('\n');
   }).join('\n');
+}
+
+function openDiffModal(entry) {
+  diffModalTitle.textContent = `${entry.siteName} — ${new Date(entry.timestamp).toLocaleString()}`;
+  diffModalBody.innerHTML = renderDiffParts(entry.diffParts);
+  diffModal.hidden = false;
+}
+
+async function viewLatestChange(siteId) {
+  const changesSection = document.getElementById('changes-section');
+  changesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const [latest] = await fetchJson(`/api/history?siteId=${siteId}&limit=1`);
+    if (latest) openDiffModal(latest);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function renderHistory(history) {
@@ -109,12 +137,7 @@ function renderHistory(history) {
   `).join('');
 
   recentChangesEl.querySelectorAll('.history-item').forEach((el) => {
-    el.addEventListener('click', () => {
-      const entry = history[Number(el.dataset.index)];
-      diffModalTitle.textContent = `${entry.siteName} — ${new Date(entry.timestamp).toLocaleString()}`;
-      diffModalBody.innerHTML = renderDiffParts(entry.diffParts);
-      diffModal.hidden = false;
-    });
+    el.addEventListener('click', () => openDiffModal(history[Number(el.dataset.index)]));
   });
 }
 

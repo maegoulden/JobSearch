@@ -223,6 +223,7 @@ main {
 }
 .diff-add { background: var(--diff-add-bg); color: var(--diff-add-text); display: block; }
 .diff-del { background: var(--diff-del-bg); color: var(--diff-del-text); display: block; text-decoration: line-through; }
+.diff-empty { color: var(--muted); font-style: italic; }
 
 @media (max-width: 480px) {
   .site-card { flex-direction: column; }
